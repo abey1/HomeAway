@@ -19,6 +19,12 @@ function HomePage() {
       <Button asChild variant="ghost">
         <Link href="/properties">properties</Link>
       </Button>
+      <Link
+        href="/profile"
+        className={`m-11 ${buttonVariants({ variant: "default" })}`}
+      >
+        Home
+      </Link>
     </div>
   );
 }
