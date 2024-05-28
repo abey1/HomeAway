@@ -8,6 +8,7 @@ import { actionFunction } from "@/utils/types";
 
 const initialState = {
   message: "",
+  success: true,
 };
 
 const FormContainer = ({
@@ -21,7 +22,7 @@ const FormContainer = ({
   const { toast } = useToast();
   useEffect(() => {
     if (state.message) {
-      toast({ description: state.message });
+      toast({ description: state.message, success: state.success });
     }
   }, [state]);
   return <form action={formAction}>{children}</form>;

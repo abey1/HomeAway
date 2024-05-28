@@ -896,6 +896,33 @@ DIRECT_URL=""
 
 ### Profile Model
 
+````prisma
+copy the following code into schema.prisma
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model TestProfile {
+  id String @id @default(uuid())
+  name String
+}
+
+we can now have two options to push this changes to the database
+
+- npx prisma migrate dev --name init
+- npx prisma db push
+
+npx prisma migrate dev --name init creates a new migration for your database schema
+changes and applies it, while npx prisma db push directly updates the database schema
+without creating a migration.n the the context of databases, a migration is a set of operations that modify the database schema, helping it evolve over time while preserving existing data.
+
 ```prisma
 model Profile {
   id           String     @id @default(uuid())
@@ -909,7 +936,7 @@ model Profile {
   updatedAt    DateTime   @updatedAt
 
 }
-```
+````
 
 ### CreateProfile Action - Complete
 
