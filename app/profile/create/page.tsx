@@ -24,7 +24,7 @@ function CreateProfilePage() {
               placeholder="Last Name"
             />
             <FormInput
-              inputName="userName"
+              inputName="username"
               type="text"
               label="User Name"
               placeholder="User Name"
