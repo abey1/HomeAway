@@ -1,31 +1,23 @@
-"use client";
-import { Button, buttonVariants } from "@/components/ui/button";
-import Link from "next/link";
+import CategoriesList from "@/components/home/CategoriesList";
+import PropertiesContainer from "@/components/home/PropertiesContainer";
 
-function HomePage() {
-  const buttonStyle = "capitalize m-8";
+function HomePage({
+  searchParams,
+}: {
+  searchParams: { category?: string; search?: string };
+}) {
+  console.log(searchParams);
   return (
-    <div>
-      <h3 className="text-3xl">HomePage</h3>
-      <Button
-        size="default"
-        className={buttonStyle}
-        onClick={() => {
-          console.log("i am clicked");
-        }}
-      >
-        Button
-      </Button>
-      <Button asChild variant="ghost">
-        <Link href="/properties">properties</Link>
-      </Button>
-      <Link
-        href="/profile"
-        className={`m-11 ${buttonVariants({ variant: "default" })}`}
-      >
-        Home
-      </Link>
-    </div>
+    <section>
+      <CategoriesList
+        category={searchParams.category}
+        search={searchParams.search}
+      />
+      <PropertiesContainer
+        category={searchParams.category}
+        search={searchParams.search}
+      />
+    </section>
   );
 }
 
