@@ -192,6 +192,89 @@ export const fetchProperties = async ({
 
     return properties;
   } catch (error) {
+    return [];
+    // return { message: validateError(error), success: false };
+  }
+};
+
+export const fetchFavoriteId = async ({
+  propertyId,
+}: {
+  propertyId: string;
+}) => {
+  const user = await getAuthUser();
+  const favorite = await db.favorite.findFirst({
+    where: {
+      propertyId,
+      profileId: user.id,
+    },
+    select: {
+      id: true,
+    },
+  });
+  return favorite?.id || null;
+};
+
+export const toggleFavoriteAction = async (prevState: {
+  propertyId: string;
+  favoriteId: string | null;
+  pathname: string;
+}) => {
+  const user = await getAuthUser();
+  const { propertyId, favoriteId, pathname } = prevState;
+  try {
+    if (favoriteId) {
+      await db.favorite.delete({
+        where: {
+          id: favoriteId,
+        },
+      });
+    } else {
+      await db.favorite.create({
+        data: {
+          profileId: user.id,
+          propertyId,
+        },
+      });
+    }
+    revalidatePath(pathname);
+    return {
+      message: favoriteId
+        ? "Successfully removed from favorite list"
+        : "Successfully added to favorite list",
+      success: true,
+    };
+  } catch (error) {
     return { message: validateError(error), success: false };
   }
+};
+
+export const fetchFavorites = async () => {
+  const user = await getAuthUser();
+  const favorites = await db.favorite.findMany({
+    where: {
+      profileId: user.id,
+    },
+    select: {
+      property: {
+        select: {
+          id: true,
+          name: true,
+          tagline: true,
+          country: true,
+          price: true,
+          image: true,
+        },
+      },
+    },
+  });
+  return favorites.map((favorite) => favorite.property);
+};
+
+export const fetchPropertyDetails = async ({ id }: { id: string }) => {
+  const singleProperty = await db.property.findUnique({
+    where: { id },
+    include: { profile: true },
+  });
+  return singleProperty;
 };
