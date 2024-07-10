@@ -72,14 +72,19 @@ export async function fetchProfileImage() {
 }
 
 export const fetchProfile = async () => {
-  const user = await getAuthUser();
-  const profile = await db.profile.findUnique({
-    where: {
-      clerkId: user.id,
-    },
-  });
-  if (!profile) redirect("/profile/create");
-  return profile;
+  try {
+    const user = await getAuthUser();
+    const profile = await db.profile.findUnique({
+      where: {
+        clerkId: user.id,
+      },
+    });
+    if (!profile) redirect("/profile/create");
+    return profile;
+  } catch (err) {
+    console.log(err);
+    redirect("/profile/create");
+  }
 };
 
 const validateError = (error: unknown): string => {
@@ -93,8 +98,8 @@ export async function updateProfileAction(
   prevState: any,
   formData: FormData
 ): Promise<{ message: string; success: boolean }> {
-  const user = await getAuthUser();
   try {
+    const user = await getAuthUser();
     const rawData = Object.fromEntries(formData);
     const validatedFields = validateWithZodSchema(profileSchema, rawData);
 
@@ -118,8 +123,8 @@ export const updateProfileImageAction = async (
   prevState: any,
   formData: FormData
 ): Promise<{ message: string; success: boolean }> => {
-  const user = await getAuthUser();
   try {
+    const user = await getAuthUser();
     const image = formData.get("image") as File;
     const validatedFields = validateWithZodSchema(imageSchema, { image });
     console.log(validatedFields);
@@ -144,8 +149,8 @@ export const createPropertyAction = async (
   prevState: any,
   formData: FormData
 ): Promise<{ message: string; success: boolean }> => {
-  const user = await getAuthUser();
   try {
+    const user = await getAuthUser();
     const rawData = Object.fromEntries(formData);
     const validatedFields = validateWithZodSchema(propertySchema, rawData);
     const file = formData.get("image") as File;
@@ -202,17 +207,22 @@ export const fetchFavoriteId = async ({
 }: {
   propertyId: string;
 }) => {
-  const user = await getAuthUser();
-  const favorite = await db.favorite.findFirst({
-    where: {
-      propertyId,
-      profileId: user.id,
-    },
-    select: {
-      id: true,
-    },
-  });
-  return favorite?.id || null;
+  try {
+    const user = await getAuthUser();
+    const favorite = await db.favorite.findFirst({
+      where: {
+        propertyId,
+        profileId: user.id,
+      },
+      select: {
+        id: true,
+      },
+    });
+    return favorite?.id || null;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
 };
 
 export const toggleFavoriteAction = async (prevState: {
@@ -220,9 +230,9 @@ export const toggleFavoriteAction = async (prevState: {
   favoriteId: string | null;
   pathname: string;
 }) => {
-  const user = await getAuthUser();
   const { propertyId, favoriteId, pathname } = prevState;
   try {
+    const user = await getAuthUser();
     if (favoriteId) {
       await db.favorite.delete({
         where: {
@@ -250,25 +260,30 @@ export const toggleFavoriteAction = async (prevState: {
 };
 
 export const fetchFavorites = async () => {
-  const user = await getAuthUser();
-  const favorites = await db.favorite.findMany({
-    where: {
-      profileId: user.id,
-    },
-    select: {
-      property: {
-        select: {
-          id: true,
-          name: true,
-          tagline: true,
-          country: true,
-          price: true,
-          image: true,
+  try {
+    const user = await getAuthUser();
+    const favorites = await db.favorite.findMany({
+      where: {
+        profileId: user.id,
+      },
+      select: {
+        property: {
+          select: {
+            id: true,
+            name: true,
+            tagline: true,
+            country: true,
+            price: true,
+            image: true,
+          },
         },
       },
-    },
-  });
-  return favorites.map((favorite) => favorite.property);
+    });
+    return favorites.map((favorite) => favorite.property);
+  } catch (err) {
+    console.log(err);
+    return [];
+  }
 };
 
 export const fetchPropertyDetails = async ({ id }: { id: string }) => {

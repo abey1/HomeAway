@@ -17,7 +17,7 @@ async function UserIcon() {
         alt="profile image"
         width={24}
         height={24}
-        className="rounded-full"
+        className="rounded-full h-4 w-4"
       />
     );
 

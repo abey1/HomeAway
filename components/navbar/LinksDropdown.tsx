@@ -34,7 +34,7 @@ function LinksDropdown() {
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem>
-            <SignUpButton>
+            <SignUpButton mode="modal">
               <div className="w-full cursor-pointer">Register</div>
             </SignUpButton>
           </DropdownMenuItem>
